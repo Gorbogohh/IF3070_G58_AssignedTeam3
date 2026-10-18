@@ -32,7 +32,7 @@ class Placement:
     orientation: str    # orientasi kendaraan (vertikal atau horizontal)
 
 
-State = Dict[str, Optional[Placement]]
+State = Dict[str, Optional[Placement]]         # dictionary
 
 # Fungsi
 
@@ -184,19 +184,3 @@ class Problem:
     def all_neighbors(self, state: State) -> Iterator[State]:
         return (nb for nb in self._candidates(state) if self.is_valid(nb))
 
-# Tampilan visualisasi state dalam teks di terminal
-    def render(self, state: State) -> str:
-        grid = [["." for _ in range(self.ship.w)] for _ in range(self.ship.l)]
-        symbol = {vid: string.ascii_uppercase[i % 26] for i, vid in enumerate(self.ids)}
-        for vid, p in state.items():
-            if p is not None:
-                for cx, cy in cells(self.vehicles[vid], p):
-                    grid[cy][cx] = symbol[vid]
-        lines = ["".join(row) for row in grid]
-        outside = [f"{symbol[v]}={v}" for v, p in state.items() if p is None]
-        inside = [f"{symbol[v]}={v}" for v, p in state.items() if p is not None]
-        lines.append(f"Di dalam : {', '.join(inside) or '-'}")
-        lines.append(f"Di luar  : {', '.join(outside) or '-'}")
-        lines.append(f"Value (total fee) = {self.objective(state)} | "
-                     f"berat = {self.total_weight(state)}/{self.ship.max_capacity}")
-        return "\n".join(lines)
