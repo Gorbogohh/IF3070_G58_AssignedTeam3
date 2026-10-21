@@ -27,7 +27,7 @@ class Ship:
 
 @dataclass(frozen=True)
 class Placement:
-    x: int              # posisi x kendaraan dalam kapal (Posisi dimulai dari pojok kiri bawah)
+    x: int              # posisi x kendaraan dalam kapal 
     y: int              # posisi y kendaraan dalam kapal
     orientation: str    # orientasi kendaraan (vertikal atau horizontal)
 
