@@ -1,0 +1,99 @@
+import math
+import random
+import time
+from typing import Optional
+
+from Fondasi import Problem, State
+
+
+def simulated_annealing(
+    problem: Problem,
+    initial_temp: float = 100.0,
+    cooling_rate: float = 0.995,
+    min_temp: float = 0.01,
+    max_iter: int = 10_000,
+    stuck_patience: int = 100,
+    seed: Optional[int] = None,
+) -> dict:
+
+    rng = random.Random(seed)
+    start_time = time.perf_counter()
+
+    current = problem.random_state(rng)
+    current_value = problem.objective(current)
+    initial_state, initial_value = current, current_value
+
+    best, best_value = current, current_value
+
+    temp = initial_temp
+    objective_history = [current_value]   # nilai current tiap iterasi
+    best_history = [best_value]           # nilai best tiap iterasi
+    prob_history = []                     # (iterasi, e^(dE/T)) untuk langkah yang lebih buruk
+
+    stuck_count = 0          # banyak kejadian 'stuck'
+    no_improve = 0           # iterasi berturut-turut tanpa perbaikan best
+    accepted_worse = 0       # banyak langkah buruk yang diterima
+    iteration = 0
+
+    while temp > min_temp and iteration < max_iter:
+        iteration += 1
+
+        neighbor = problem.random_neighbor(current, rng)
+        if neighbor is not None:
+            neighbor_value = problem.objective(neighbor)
+            delta_e = neighbor_value - current_value
+
+            if delta_e > 0:
+                accept = True
+            elif delta_e == 0:
+                accept = True  # sideways move: probabilitas e^0 = 1
+            else:
+                prob = math.exp(delta_e / temp)
+                prob_history.append((iteration, prob))
+                accept = rng.random() < prob
+                if accept:
+                    accepted_worse += 1
+
+            if accept:
+                current, current_value = neighbor, neighbor_value
+
+        # Perbarui solusi terbaik dan hitung 'stuck'
+        if current_value > best_value:
+            best, best_value = current, current_value
+            no_improve = 0
+        else:
+            no_improve += 1
+            if no_improve == stuck_patience:
+                stuck_count += 1
+                no_improve = 0
+
+        objective_history.append(current_value)
+        best_history.append(best_value)
+        temp *= cooling_rate
+
+    duration = time.perf_counter() - start_time
+
+    return {
+        "params": {
+            "initial_temp": initial_temp,
+            "cooling_rate": cooling_rate,
+            "min_temp": min_temp,
+            "max_iter": max_iter,
+            "stuck_patience": stuck_patience,
+            "seed": seed,
+        },
+        "initial_state": initial_state,
+        "initial_value": initial_value,
+        "final_state": best,
+        "final_value": best_value,
+        "last_state_value": current_value,
+        "total_weight": problem.total_weight(best),
+        "is_valid": problem.is_valid(best),
+        "iterations": iteration,
+        "duration": duration,
+        "stuck_count": stuck_count,
+        "accepted_worse": accepted_worse,
+        "objective_history": objective_history,
+        "best_history": best_history,
+        "prob_history": prob_history,
+    }
