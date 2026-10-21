@@ -1,9 +1,11 @@
+import json
 import math
 import random
 import time
+from dataclasses import asdict
 from typing import Optional
 
-from Fondasi import Problem, State
+from Fondasi import Problem, State, cells
 
 
 def simulated_annealing(
@@ -97,3 +99,38 @@ def simulated_annealing(
         "best_history": best_history,
         "prob_history": prob_history,
     }
+
+# Utilitas output
+
+def state_to_dict(state: State) -> dict:
+    """Mengubah state menjadi dict biasa agar bisa disimpan sebagai JSON."""
+    return {vid: (asdict(p) if p is not None else None) for vid, p in state.items()}
+
+
+def deck_to_text(problem: Problem, state: State) -> str:
+    """Gambar geladak dalam teks. Tiap kendaraan diberi huruf/angka; '.' = kosong."""
+    symbols = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
+    grid = [["." for _ in range(problem.ship.w)] for _ in range(problem.ship.l)]
+    legend = []
+    for i, (vid, p) in enumerate((v, p) for v, p in state.items() if p is not None):
+        sym = symbols[i % len(symbols)]
+        legend.append(f"{sym}={vid}")
+        for cx, cy in cells(problem.vehicles[vid], p):
+            grid[cy][cx] = sym
+    # y = 0 di bawah (posisi dimulai dari pojok kiri bawah)
+    rows = ["".join(r) for r in reversed(grid)]
+    outside = [vid for vid, p in state.items() if p is None]
+    return (
+        "\n".join(rows)
+        + "\nDi dalam : " + ", ".join(legend)
+        + "\nDi luar  : " + (", ".join(outside) if outside else "-")
+    )
+
+
+def save_result(result: dict, path: str) -> None:
+    """Menyimpan hasil satu run ke file JSON."""
+    out = dict(result)
+    out["initial_state"] = state_to_dict(result["initial_state"])
+    out["final_state"] = state_to_dict(result["final_state"])
+    with open(path, "w", encoding="utf-8") as f:
+        json.dump(out, f, indent=2)
