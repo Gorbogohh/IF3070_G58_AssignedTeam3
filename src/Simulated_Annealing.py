@@ -134,3 +134,34 @@ def save_result(result: dict, path: str) -> None:
     out["final_state"] = state_to_dict(result["final_state"])
     with open(path, "w", encoding="utf-8") as f:
         json.dump(out, f, indent=2)
+
+def plot_result(result: dict, path: str, title: str = "Simulated Annealing") -> None:
+    """Menyimpan plot objective dan e^(dE/T) terhadap iterasi ke file PNG."""
+    import matplotlib
+    matplotlib.use("Agg")
+    import matplotlib.pyplot as plt
+
+    fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(10, 8))
+
+    # Grafik objective function terhadap iterasi
+    ax1.plot(result["objective_history"], label="Current", linewidth=1)
+    ax1.plot(result["best_history"], label="Best", linewidth=1.5)
+    ax1.set_xlabel("Iterasi")
+    ax1.set_ylabel("Objective (total ShippingFee)")
+    ax1.set_title(f"{title}: objective function terhadap iterasi")
+    ax1.legend()
+    ax1.grid(alpha=0.3)
+
+    # Grafik probabilitas menerima langkah yang lebih buruk
+    if result["prob_history"]:
+        it, prob = zip(*result["prob_history"])
+        ax2.scatter(it, prob, s=6)
+    ax2.set_xlabel("Iterasi")
+    ax2.set_ylabel(r"$e^{\Delta E / T}$")
+    ax2.set_ylim(-0.05, 1.05)
+    ax2.set_title("Probabilitas menerima langkah yang lebih buruk")
+    ax2.grid(alpha=0.3)
+
+    fig.tight_layout()
+    fig.savefig(path, dpi=120)
+    plt.close(fig)
