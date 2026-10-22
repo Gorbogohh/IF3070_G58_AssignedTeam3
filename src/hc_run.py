@@ -2,7 +2,7 @@ import csv
 import json
 import os
 import random
-from foundation import Problem
+from fondasi import Problem
 from HC_sideways import hill_climbing
 
 # Mengirim file output ke folder /output
@@ -15,7 +15,7 @@ def state_to_dict(state):
             for vid, p in state.items()}
 
 # Membaca file data.json
-problem = Problem.from_json("data.json")
+problem = Problem.from_json("hc.data.json")
 rows = []
 
 # Melakukan search terhadap 3 seed yang dipilih dan memberi hasilnya
