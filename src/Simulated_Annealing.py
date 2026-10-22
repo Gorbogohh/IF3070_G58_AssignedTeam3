@@ -165,3 +165,49 @@ def plot_result(result: dict, path: str, title: str = "Simulated Annealing") -> 
     fig.tight_layout()
     fig.savefig(path, dpi=120)
     plt.close(fig)
+
+if __name__ == "__main__":
+    import argparse
+    import os
+
+    parser = argparse.ArgumentParser(description="Jalankan Simulated Annealing beberapa kali")
+    parser.add_argument("input", help="path file input .json")
+    parser.add_argument("--runs", type=int, default=3)
+    parser.add_argument("--t0", type=float, default=100.0)
+    parser.add_argument("--alpha", type=float, default=0.995)
+    parser.add_argument("--tmin", type=float, default=0.01)
+    parser.add_argument("--max-iter", type=int, default=10_000)
+    parser.add_argument("--patience", type=int, default=100)
+    parser.add_argument("--seed", type=int, default=None,
+                        help="seed awal; run ke-i memakai seed + i - 1")
+    parser.add_argument("--out", default="output/simulated_annealing")
+    args = parser.parse_args()
+
+    os.makedirs(args.out, exist_ok=True)
+    problem = Problem.from_json(args.input)
+
+    for run in range(1, args.runs + 1):
+        seed = None if args.seed is None else args.seed + run - 1
+        res = simulated_annealing(
+            problem,
+            initial_temp=args.t0,
+            cooling_rate=args.alpha,
+            min_temp=args.tmin,
+            max_iter=args.max_iter,
+            stuck_patience=args.patience,
+            seed=seed,
+        )
+        print(f"===== Run {run} (seed = {seed}) =====")
+        print("State awal (value =", res["initial_value"], ")")
+        print(deck_to_text(problem, res["initial_state"]))
+        print("\nState akhir (value =", res["final_value"], ")")
+        print(deck_to_text(problem, res["final_state"]))
+        print(f"\nTotal berat     : {res['total_weight']} / {problem.ship.max_capacity}")
+        print(f"Valid           : {res['is_valid']}")
+        print(f"Iterasi         : {res['iterations']}")
+        print(f"Durasi          : {res['duration']:.3f} detik")
+        print(f"Frekuensi stuck : {res['stuck_count']}")
+        print(f"Langkah buruk diterima: {res['accepted_worse']}\n")
+
+        save_result(res, os.path.join(args.out, f"run{run}.json"))
+        plot_result(res, os.path.join(args.out, f"run{run}.png"), title=f"SA Run {run}")
