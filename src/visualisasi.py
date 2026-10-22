@@ -9,7 +9,7 @@ from fondasi import Problem, footprint
 OUT = "../output"
 SEEDS = (1, 3, 5)
 
-problem = Problem.from_json("data.json")
+problem = Problem.from_json("hc_data.json")
 ship = problem.ship
 cmap = plt.get_cmap("tab20")
 
