@@ -5,8 +5,8 @@ from dataclasses import dataclass
 from itertools import combinations
 from typing import Dict, Iterator, Optional
 
-Horizontal: str
-Vertical: str
+Horizontal = "Horizontal"
+Vertical = "Vertical"
 
 @dataclass(frozen=True)
 class Vehicle:
