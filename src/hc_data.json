@@ -1,0 +1,23 @@
+{
+  "ship": 
+  {"w": 10, "l": 20, "max_capacity": 400},
+
+  "vehicles": [
+    {"id": "V0", "w": 4, "l": 5, "fee": 15, "weight": 21, "eta": 9},
+    {"id": "V1", "w": 4, "l": 5, "fee": 48, "weight": 35, "eta": 6},
+    {"id": "V2", "w": 2, "l": 7, "fee": 27, "weight": 23, "eta": 3},
+    {"id": "V3", "w": 1, "l": 6, "fee": 15, "weight": 39, "eta": 10},
+    {"id": "V4", "w": 2, "l": 4, "fee": 22, "weight": 9, "eta": 6},
+    {"id": "V5", "w": 4, "l": 6, "fee": 52, "weight": 27, "eta": 7},
+    {"id": "V6", "w": 3, "l": 6, "fee": 46, "weight": 40, "eta": 4},
+    {"id": "V7", "w": 7, "l": 7, "fee": 280, "weight": 200, "eta": 9},
+    {"id": "V8", "w": 1, "l": 1, "fee": 10, "weight": 5, "eta": 10},
+    {"id": "V9", "w": 4, "l": 4, "fee": 41, "weight": 25, "eta": 2},
+    {"id": "V10", "w": 2, "l": 6, "fee": 38, "weight": 20, "eta": 3},
+    {"id": "V11", "w": 4, "l": 2, "fee": 20, "weight": 25, "eta": 9},
+    {"id": "V12", "w": 4, "l": 2, "fee": 48, "weight": 40, "eta": 5},
+    {"id": "V13", "w": 1, "l": 6, "fee": 32, "weight": 39, "eta": 4},
+    {"id": "V14", "w": 3, "l": 5, "fee": 26, "weight": 29, "eta": 6},
+    {"id": "V15", "w": 2, "l": 4, "fee": 33, "weight": 17, "eta": 3}
+  ]
+}
