@@ -2,8 +2,8 @@ import random
 import time
 from typing import Optional
 
-from foundation import Problem, State
-from search import SearchResult
+from fondasi import Problem, State
+from hc_search import SearchResult
 
 
 def hill_climbing(problem: Problem, rng: random.Random, max_sideways: int = 0,
